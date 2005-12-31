@@ -19,6 +19,8 @@
 #include <commentsframe.h>
 #include <relativevolumeframe.h>
 #include <textidentificationframe.h>
+#include <uniquefileidentifierframe.h>
+#include <unknownframe.h>
 
 #include <boost/python.hpp>
 #include <boost/scoped_array.hpp>
@@ -646,7 +648,8 @@ BOOST_PYTHON_MODULE(_tagpy)
   {
     typedef ID3v2::UserTextIdentificationFrame cl;
     class_<cl, bases<ID3v2::TextIdentificationFrame>, boost::noncopyable>
-      ("id3v2_UserTextIdentificationFrame", init<const ByteVector &, optional<String::Type> >())
+      ("id3v2_UserTextIdentificationFrame", init<const ByteVector &>())
+      .def(init<optional<String::Type> >())
       .DEF_SIMPLE_METHOD(description)
       .DEF_SIMPLE_METHOD(setDescription)
       .DEF_SIMPLE_METHOD(fieldList)
@@ -664,6 +667,14 @@ BOOST_PYTHON_MODULE(_tagpy)
       .DEF_SIMPLE_METHOD(setIdentifier)
       ;
   }
+
+  {
+    typedef ID3v2::UnknownFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_UnknownFrame", init<const ByteVector &>())
+      .DEF_SIMPLE_METHOD(data)
+      ;
+  }
   // -------------------------------------------------------------
   // MPEG
   // -------------------------------------------------------------
@@ -674,6 +685,7 @@ BOOST_PYTHON_MODULE(_tagpy)
     .value("APE", MPEG::File::APE)
     .value("AllTags", MPEG::File::AllTags)
     ;
+
   class_<MPEG::File, boost::noncopyable>("mpeg_File",
                      init<const char *, optional<bool, AudioProperties::ReadStyle> >())
     .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())

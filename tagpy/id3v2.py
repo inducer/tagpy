@@ -19,3 +19,4 @@ RelativeVolumeFrame = _tagpy.id3v2_RelativeVolumeFrame
 TextIdentificationFrame = _tagpy.id3v2_TextIdentificationFrame
 UserTextIdentificationFrame = _tagpy.id3v2_UserTextIdentificationFrame
 UniqueFileIdentifierFrame = _tagpy.id3v2_UniqueFileIdentifierFrame
+UnkownFrame = _tagpy.id3v2_UnknownFrame
