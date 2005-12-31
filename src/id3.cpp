@@ -1,0 +1,378 @@
+#include <id3v1genres.h>
+#include <id3v1tag.h>
+#include <id3v2tag.h>
+#include <id3v2header.h>
+#include <id3v2extendedheader.h>
+#include <id3v2footer.h>
+#include <mpegfile.h>
+#include <attachedpictureframe.h>
+#include <commentsframe.h>
+#include <relativevolumeframe.h>
+#include <textidentificationframe.h>
+#include <uniquefileidentifierframe.h>
+#include <unknownframe.h>
+#include <apetag.h>
+
+#include "common.hpp"
+
+
+
+
+namespace
+{
+  // -------------------------------------------------------------
+  // ID3v2
+  // -------------------------------------------------------------
+  struct id3v2_FrameWrap : ID3v2::Frame, wrapper<ID3v2::Frame>
+  {
+      String toString() const { return this->get_override("toString")(); }
+  };
+  
+
+  void id3v2_Tag_removeFrame(ID3v2::Tag &t, ID3v2::Frame *f) { t.removeFrame(f); }
+  
+  object id3v2_rvf_channels(const ID3v2::RelativeVolumeFrame &rvf)
+  {
+    List<ID3v2::RelativeVolumeFrame::ChannelType> l = rvf.channels();
+    return make_list(l.begin(), l.end());
+  }
+
+  #define MF_OL(MF, MIN, MAX) \
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(MF##_overloads, MF, MIN, MAX);
+
+  MF_OL(createFrame, 1, 2);
+  MF_OL(volumeAdjustmentIndex, 0, 1);
+  MF_OL(volumeAdjustment, 0, 1);
+  MF_OL(peakVolume, 0, 1);
+  MF_OL(setVolumeAdjustmentIndex, 1, 2);
+  MF_OL(setVolumeAdjustment, 1, 2);
+  MF_OL(setPeakVolume, 1, 2);
+
+  // -------------------------------------------------------------
+  // MPEG
+  // -------------------------------------------------------------
+  MF_OL(save, 0, 2)
+  MF_OL(ID3v1Tag, 0, 1)
+  MF_OL(ID3v2Tag, 0, 1)
+  MF_OL(APETag, 0, 1)
+  MF_OL(strip, 0, 1)
+}
+
+
+
+
+void exposeID3()
+{
+  // -------------------------------------------------------------
+  // ID3v1
+  // -------------------------------------------------------------
+  def("id3v1_genre", ID3v1::genre);
+
+  class_<ID3v1::Tag, boost::noncopyable, bases<Tag> >
+    ("id3v1_Tag")
+    .def("render", &ID3v1::Tag::render)
+    ;
+
+  // -------------------------------------------------------------
+  // ID3v2
+  // -------------------------------------------------------------
+  exposeMap<ByteVector, ID3v2::FrameList>("id3v2_FrameListMap");
+  exposePointerList<ID3v2::Frame>("id3v2_FrameList");
+
+  ID3v2::Frame *(ID3v2::FrameFactory::*cf1)(const ByteVector &, bool) const
+    = &ID3v2::FrameFactory::createFrame;
+  ID3v2::Frame *(ID3v2::FrameFactory::*cf2)(const ByteVector &, TagLib::uint) const
+    = &ID3v2::FrameFactory::createFrame;
+  class_<ID3v2::FrameFactory, boost::noncopyable>
+    ("id3v2_FrameFactory", no_init)
+    .def("createFrame", cf1, return_value_policy<manage_new_object>())
+    .def("createFrame", cf2, createFrame_overloads()[return_value_policy<manage_new_object>()])
+    .def("instance", &ID3v2::FrameFactory::instance,
+         return_value_policy<reference_existing_object>())
+    .staticmethod("instance")
+    // MISSING: text encoding
+    ;
+
+  class_<id3v2_FrameWrap, boost::noncopyable>("id3v2_Frame", no_init)
+    .def("frameID", &ID3v2::Frame::frameID)
+    .def("size", &ID3v2::Frame::size)
+    .def("setData", &ID3v2::Frame::setData)
+    .def("setText", &ID3v2::Frame::setText)
+    .def("toString", pure_virtual(&ID3v2::Frame::toString))
+    .def("render", &ID3v2::Frame::render)
+
+    .def("headerSize", 
+         (TagLib::uint (*)()) 
+         &ID3v2::Frame::headerSize)
+    .def("headerSize", 
+         (TagLib::uint (*)(TagLib::uint)) 
+         &ID3v2::Frame::headerSize)
+    // MISSING: textDelimiter
+    ;
+
+  {
+    typedef ID3v2::Header cl;
+    class_<cl, boost::noncopyable>
+      ("id3v2_Header") 
+    // MISSING: second constructor
+      .DEF_SIMPLE_METHOD(majorVersion)
+      .DEF_SIMPLE_METHOD(revisionNumber)
+      .DEF_SIMPLE_METHOD(extendedHeader)
+      .DEF_SIMPLE_METHOD(experimentalIndicator)
+      .DEF_SIMPLE_METHOD(footerPresent)
+      .DEF_SIMPLE_METHOD(tagSize)
+      .DEF_SIMPLE_METHOD(completeTagSize)
+      .DEF_SIMPLE_METHOD(setTagSize)
+      .DEF_SIMPLE_METHOD(setData)
+      .DEF_SIMPLE_METHOD(render)
+      .DEF_SIMPLE_METHOD(size)
+      .staticmethod("size")
+      .DEF_SIMPLE_METHOD(fileIdentifier)
+      .staticmethod("fileIdentifier")
+      ;
+  }
+
+  {
+    typedef ID3v2::ExtendedHeader cl;
+    class_<cl, boost::noncopyable>
+      ("id3v2_ExtendedHeader", no_init) 
+      .DEF_SIMPLE_METHOD(size)
+      .DEF_SIMPLE_METHOD(setData)
+      ;
+  }
+
+  {
+    typedef ID3v2::Footer cl;
+    class_<cl, boost::noncopyable>
+      ("id3v2_Footer", no_init) 
+      .DEF_SIMPLE_METHOD(render)
+      .DEF_SIMPLE_METHOD(size)
+      .staticmethod("size")
+      ;
+  }
+
+  {
+    typedef ID3v2::Tag cl;
+    const ID3v2::FrameList &(cl::*fl1)(const ByteVector &) const =
+      &cl::frameList;
+    const ID3v2::FrameList &(cl::*fl2)() const =
+      &cl::frameList;
+  
+    class_<cl, boost::noncopyable, bases<Tag> >("id3v2_Tag")
+      .def("header", &ID3v2::Tag::header, return_internal_reference<>())
+      .def("extendedHeader", &ID3v2::Tag::extendedHeader, return_internal_reference<>())
+      .def("footer", &ID3v2::Tag::footer, return_internal_reference<>())
+      
+      .def("frameListMap", &ID3v2::Tag::frameListMap, return_internal_reference<>())
+      .def("frameList", fl1, return_internal_reference<>())
+      .def("frameList", fl2, return_internal_reference<>())
+      
+      .DEF_SIMPLE_METHOD(addFrame)
+      .DEF_SIMPLE_METHOD(removeFrame)
+      .DEF_SIMPLE_METHOD(removeFrames)
+      
+      .DEF_SIMPLE_METHOD(render)
+      ;
+  }
+
+ 
+  // -------------------------------------------------------------
+  // ID3v2 frame types
+  // -------------------------------------------------------------
+  {
+    typedef TagLib::ID3v2::AttachedPictureFrame scope;
+    enum_<ID3v2::AttachedPictureFrame::Type>("id3v2_AttachedPictureFrame_Type")
+      .ENUM_VALUE(Other)
+      .ENUM_VALUE(FileIcon)
+      .ENUM_VALUE(OtherFileIcon)
+      .ENUM_VALUE(FrontCover)
+      .ENUM_VALUE(BackCover)
+      .ENUM_VALUE(LeafletPage)
+      .ENUM_VALUE(Media)
+      .ENUM_VALUE(LeadArtist)
+      .ENUM_VALUE(Artist)
+      .ENUM_VALUE(Conductor)
+      .ENUM_VALUE(Band)
+      .ENUM_VALUE(Composer)
+      .ENUM_VALUE(Lyricist)
+      .ENUM_VALUE(RecordingLocation)
+      .ENUM_VALUE(DuringRecording)
+      .ENUM_VALUE(DuringPerformance)
+      .ENUM_VALUE(MovieScreenCapture)
+      .ENUM_VALUE(ColouredFish)
+      .ENUM_VALUE(Illustration)
+      .ENUM_VALUE(BandLogo)
+      .ENUM_VALUE(PublisherLogo)
+      ;
+  }
+
+  {
+    typedef ID3v2::AttachedPictureFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_AttachedPictureFrame", init<optional<const ByteVector &> >())
+      .DEF_SIMPLE_METHOD(textEncoding)
+      .DEF_SIMPLE_METHOD(setTextEncoding)
+      .DEF_SIMPLE_METHOD(mimeType)
+      .DEF_SIMPLE_METHOD(setMimeType)
+      .DEF_SIMPLE_METHOD(type)
+      .DEF_SIMPLE_METHOD(setType)
+      .DEF_SIMPLE_METHOD(description)
+      .DEF_SIMPLE_METHOD(setDescription)
+      .DEF_SIMPLE_METHOD(picture)
+      .DEF_SIMPLE_METHOD(setPicture)
+      ;
+  }
+
+  {
+    typedef ID3v2::CommentsFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_CommentsFrame", init<optional<const ByteVector &> >())
+      .def(init<String::Type>())
+      .DEF_SIMPLE_METHOD(language)
+      .DEF_SIMPLE_METHOD(setLanguage)
+      .DEF_SIMPLE_METHOD(description)
+      .DEF_SIMPLE_METHOD(setDescription)
+      .DEF_SIMPLE_METHOD(textEncoding)
+      .DEF_SIMPLE_METHOD(setTextEncoding)
+      ;
+  }
+
+  {
+    typedef ID3v2::RelativeVolumeFrame::PeakVolume cl;
+    class_<cl>
+      ("id3v2_PeakVolume")
+      .def_readwrite("bitsRepresentingPeak", &cl::bitsRepresentingPeak)
+      .def_readwrite("peakVolume", &cl::peakVolume)
+      ;
+  }
+
+  {
+    typedef TagLib::ID3v2::RelativeVolumeFrame scope;
+    enum_<ID3v2::RelativeVolumeFrame::ChannelType>("id3v2_RelativeVolumeFrame_ChannelType")
+      .ENUM_VALUE(Other)
+      .ENUM_VALUE(MasterVolume)
+      .ENUM_VALUE(FrontRight)
+      .ENUM_VALUE(FrontLeft)
+      .ENUM_VALUE(BackRight)
+      .ENUM_VALUE(BackLeft)
+      .ENUM_VALUE(FrontCentre)
+      .ENUM_VALUE(BackCentre)
+      .ENUM_VALUE(Subwoofer)
+      ;
+  }
+
+  {
+    typedef ID3v2::RelativeVolumeFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_RelativeVolumeFrame", init<optional<const ByteVector &> >())
+      .def("channels", id3v2_rvf_channels)
+      .DEF_SIMPLE_METHOD(setChannelType)
+      .DEF_OVERLOADED_METHOD(volumeAdjustmentIndex, short (cl::*)(cl::ChannelType) const)
+      .DEF_OVERLOADED_METHOD(setVolumeAdjustmentIndex, void (cl::*)(short, cl::ChannelType))
+      .DEF_OVERLOADED_METHOD(volumeAdjustment, float (cl::*)(cl::ChannelType) const)
+      .DEF_OVERLOADED_METHOD(setVolumeAdjustment, void (cl::*)(float, cl::ChannelType))
+      .DEF_OVERLOADED_METHOD(peakVolume, cl::PeakVolume (cl::*)(cl::ChannelType) const)
+      .DEF_OVERLOADED_METHOD(setPeakVolume, void (cl::*)(const cl::PeakVolume &, cl::ChannelType))
+      ;
+  }
+
+  {
+    typedef ID3v2::TextIdentificationFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_TextIdentificationFrame", init<const ByteVector &, optional<String::Type> >())
+      .def("setText", (void (cl::*)(const String &)) &cl::setText)
+      .def("setText", (void (cl::*)(const StringList &)) &cl::setText)
+      .DEF_SIMPLE_METHOD(textEncoding)
+      .DEF_SIMPLE_METHOD(setTextEncoding)
+      .DEF_SIMPLE_METHOD(fieldList)
+      ;
+  }
+
+  {
+    typedef ID3v2::UserTextIdentificationFrame cl;
+    class_<cl, bases<ID3v2::TextIdentificationFrame>, boost::noncopyable>
+      ("id3v2_UserTextIdentificationFrame", init<const ByteVector &>())
+      .def(init<optional<String::Type> >())
+      .DEF_SIMPLE_METHOD(description)
+      .DEF_SIMPLE_METHOD(setDescription)
+      .DEF_SIMPLE_METHOD(fieldList)
+      ;
+  }
+
+  {
+    typedef ID3v2::UniqueFileIdentifierFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_UniqueFileIdentifierFrame", init<const ByteVector &>())
+      .def(init<const String &, const ByteVector &>())
+      .DEF_SIMPLE_METHOD(owner)
+      .DEF_SIMPLE_METHOD(setOwner)
+      .DEF_SIMPLE_METHOD(identifier)
+      .DEF_SIMPLE_METHOD(setIdentifier)
+      ;
+  }
+
+  {
+    typedef ID3v2::UnknownFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_UnknownFrame", init<const ByteVector &>())
+      .DEF_SIMPLE_METHOD(data)
+      ;
+  }
+
+  // -------------------------------------------------------------
+  // MPEG
+  // -------------------------------------------------------------
+  enum_<MPEG::File::TagTypes>("mpeg_TagTypes")
+    .value("NoTags", MPEG::File::NoTags)
+    .value("ID3v1", MPEG::File::ID3v1)
+    .value("ID3v2", MPEG::File::ID3v2)
+    .value("APE", MPEG::File::APE)
+    .value("AllTags", MPEG::File::AllTags)
+    ;
+
+  class_<MPEG::File, boost::noncopyable>("mpeg_File",
+                     init<const char *, optional<bool, AudioProperties::ReadStyle> >())
+    .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
+    .def("save", 
+         (bool (MPEG::File::*)(int, bool))
+         &MPEG::File::save,
+         save_overloads())
+    .def("ID3v1Tag", 
+         (ID3v1::Tag *(MPEG::File::*)(bool))
+         &MPEG::File::ID3v1Tag,
+         ID3v1Tag_overloads()[return_internal_reference<>()])
+    .def("ID3v2Tag", 
+         (ID3v2::Tag *(MPEG::File::*)(bool))
+         &MPEG::File::ID3v2Tag,
+         ID3v2Tag_overloads()[return_internal_reference<>()])
+    .def("APETag", 
+         (APE::Tag *(MPEG::File::*)(bool))
+         &MPEG::File::APETag,
+         APETag_overloads()[return_internal_reference<>()])
+    .def("strip", 
+         (bool (MPEG::File::*)(int))
+         &MPEG::File::strip,
+         strip_overloads())
+    .def("setID3v2FrameFactory", &MPEG::File::setID3v2FrameFactory)
+    .def("firstFrameOffset", &MPEG::File::firstFrameOffset)
+    .def("nextFrameOffset", &MPEG::File::nextFrameOffset)
+    .def("previousFrameOffset", &MPEG::File::previousFrameOffset)
+    .def("lastFrameOffset", &MPEG::File::lastFrameOffset)
+    ;
+
+  // MISSING: Header, XingHeader
+}
+
+
+
+
+// EMACS-FORMAT-TAG
+//
+// Local Variables:
+// mode: C++
+// eval: (c-set-style "stroustrup")
+// eval: (c-set-offset 'access-label -2)
+// eval: (c-set-offset 'inclass '++)
+// c-basic-offset: 2
+// tab-width: 8
+// End:

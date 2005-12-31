@@ -1,0 +1,186 @@
+#include <boost/python.hpp>
+#include <boost/scoped_array.hpp>
+#include <stdexcept>
+
+
+
+
+using namespace boost::python;
+using namespace TagLib;
+using namespace std;
+
+
+
+#define MF_OL(MF, MIN, MAX) \
+  BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(MF##_overloads, MF, MIN, MAX);
+#define DEF_SIMPLE_METHOD(NAME) \
+  def(#NAME, &cl::NAME)
+#define DEF_VIRTUAL_METHOD(NAME) \
+  def(#NAME, pure_virtual(&cl::NAME))
+#define DEF_OVERLOADED_METHOD(NAME, CAST) \
+  def(#NAME, (CAST) &cl::NAME, NAME##_overloads())
+#define ENUM_VALUE(NAME) \
+  value(#NAME, scope::NAME)
+
+
+
+
+namespace {
+  template<typename Iterator>
+  inline object make_list(Iterator first, Iterator last)
+  {
+    boost::python::list result;
+    while (first != last)
+      result.append(*first++);
+    return result;
+  }
+
+
+
+
+  // -------------------------------------------------------------
+  // Map
+  // -------------------------------------------------------------
+  template<typename Key, typename Value>
+  Value &Map_getitem(Map<Key, Value> &m, const Key &k)
+  {
+    if (!m.contains(k))
+    {
+      PyErr_SetString( PyExc_KeyError, "key not in map");
+      throw error_already_set();
+    }
+    return m[k];
+  }
+
+  template<typename Key, typename Value>
+  void Map_setitem(Map<Key, Value> &m, const Key &k, const Value &v)
+  {
+    m[k] = v;
+  }
+
+  template<typename Key, typename Value>
+  object Map_keys(Map<Key, Value> &m)
+  {
+    boost::python::list keys;
+    
+    typedef Map<Key, Value> map;
+    typename map::Iterator first = m.begin(), last = m.end();
+    while (first != last)
+      keys.append((first++)->first);
+    return keys;
+  }
+
+  template<typename Key, typename Value>
+  void exposeMap(const char *name)
+  {
+    typedef Map<Key, Value> map;
+    class_<map>(name)
+      .def("__len__", &map::size)
+      .def("size", &map::size)
+      .def("size", &map::clear)
+      .def("isEmpty", &map::isEmpty)
+      .def("__getitem__", Map_getitem<Key, Value>, return_internal_reference<>())
+      .def("__setitem__", Map_setitem<Key, Value>)
+      .def("__contains__", &map::contains)
+      .def("keys", Map_keys<Key, Value>)
+      ;
+  }
+
+  // -------------------------------------------------------------
+  // List
+  // -------------------------------------------------------------
+  template<typename Value>
+  Value &List_getitem(List<Value> &l, TagLib::uint i)
+  {
+    if (i >= l.size())
+    {
+      PyErr_SetString( PyExc_IndexError, "index out of bounds");
+      throw error_already_set();
+    }
+    return l[i];
+  }
+
+  template<typename Value>
+  void List_setitem(List<Value> &l, TagLib::uint i, Value v)
+  {
+    if (i >= l.size())
+    {
+      PyErr_SetString( PyExc_IndexError, "index out of bounds");
+      throw error_already_set();
+    }
+    l[i] = v;
+  }
+
+  template<typename Value>
+  void List_append(List<Value> &l, Value v)
+  {
+    l.append(v);
+  }
+
+  template<typename Value>
+  void exposeList(const char *name)
+  {
+    typedef List<Value *> list;
+    class_<list>(name)
+      .def("__len__", &list::size)
+      .def("size", &list::size)
+      .def("clear", &list::clear)
+      .def("isEmpty", &list::isEmpty)
+      .def("__getitem__", List_getitem<Value>, return_internal_reference<>())
+      .def("__setitem__", List_setitem<Value>)
+      .def("append", List_append<Value>)
+      // MISSING: iterators, insert, find, contains, erase,
+      // assignment, comparison
+      ;
+  }
+
+  // -------------------------------------------------------------
+  // PointerList
+  // -------------------------------------------------------------
+  template<typename Value>
+  Value *&PointerList_getitem(List<Value *> &l, TagLib::uint i)
+  {
+    if (i >= l.size())
+    {
+      PyErr_SetString( PyExc_IndexError, "index out of bounds");
+      throw error_already_set();
+    }
+    return l[i];
+  }
+
+  template<typename Value>
+  void PointerList_setitem(List<Value *> &l, TagLib::uint i, auto_ptr<Value> v)
+  {
+    if (i >= l.size())
+    {
+      PyErr_SetString( PyExc_IndexError, "index out of bounds");
+      throw error_already_set();
+    }
+    l[i] = v.release();
+  }
+
+  template<typename Value>
+  void PointerList_append(List<Value *> &l, auto_ptr<Value> v)
+  {
+    l.append(v.release());
+  }
+
+  template<typename Value>
+  void exposePointerList(const char *name)
+  {
+    typedef List<Value *> list;
+    class_<list>(name)
+      .def("__len__", &list::size)
+      .def("size", &list::size)
+      .def("clear", &list::clear)
+      .def("isEmpty", &list::isEmpty)
+      .def("__getitem__", PointerList_getitem<Value>, return_internal_reference<>())
+      .def("__setitem__", PointerList_setitem<Value>)
+      .def("append", PointerList_append<Value>)
+      // MISSING: iterators, insert, find, contains, erase,
+      // assignment, comparison
+      ;
+  }
+}
+
+
