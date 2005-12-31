@@ -264,7 +264,8 @@ void exposeID3()
   {
     typedef ID3v2::RelativeVolumeFrame cl;
     class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
-      ("id3v2_RelativeVolumeFrame", init<optional<const ByteVector &> >())
+      ("id3v2_RelativeVolumeFrame", init<const ByteVector &>())
+      // MISSING: Empty constructor, gives symbol errors
       .def("channels", id3v2_rvf_channels)
       .DEF_SIMPLE_METHOD(setChannelType)
       .DEF_OVERLOADED_METHOD(volumeAdjustmentIndex, short (cl::*)(cl::ChannelType) const)
