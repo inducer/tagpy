@@ -13,8 +13,9 @@ Just like TagLib, TagPy can:
 - access APE tags in Musepack and MP3 files.
 
 All these have their own specific interfaces, but TagLib's generic tag
-reading mechanism is also supported. You can find examples in the test/
-directory.
+reading and writing mechanism is also supported. 
+
+You can find examples in the test/ directory.
 
 Andreas Kloeckner <inform@tiker.net>
 
