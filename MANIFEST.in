@@ -1,0 +1,3 @@
+include test/la.*
+include test/*.py
+include src/common.hpp
