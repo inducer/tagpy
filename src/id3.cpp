@@ -26,6 +26,10 @@ namespace
   struct id3v2_FrameWrap : ID3v2::Frame, wrapper<ID3v2::Frame>
   {
       String toString() const { return this->get_override("toString")(); }
+    protected: // maintain constructability
+      id3v2_FrameWrap(const ByteVector &data) : ID3v2::Frame(data) { }
+      // In docs, but not in code:
+      /* id3v2_FrameWrap(ID3v2::Header *h) : ID3v2::Frame(h) { } */
   };
   
 

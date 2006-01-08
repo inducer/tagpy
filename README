@@ -27,6 +27,19 @@ Andreas Kloeckner <inform@tiker.net>
 Building TagPy
 ==============
 
+Step 0: Verifying that you have the right dependencies
+-------
+
+TagPy works for me with
+
+- TagLib 1.4
+- Boost.Python 1.33
+- gcc 4.0
+
+I have reason to believe that slightly older versions of gcc and 
+Boost.Python should be fine, but the 1.4 requirement for TagLib is
+firm.
+
 Step 1: Installing Boost.Python
 -------
 

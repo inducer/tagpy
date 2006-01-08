@@ -13,7 +13,6 @@
 
 
 
-
 namespace 
 {
   struct tlstring_to_unicode
@@ -79,6 +78,8 @@ namespace
       int bitrate() const { return this->get_override("bitrate")(); }
       int sampleRate() const { return this->get_override("sampleRate")(); }
       int channels() const { return this->get_override("channels")(); }
+    protected:
+      AudioPropertiesWrap(ReadStyle style) : AudioProperties(style) { }
   };
 
 
@@ -89,6 +90,8 @@ namespace
       Tag *tag() const { return this->get_override("tag")(); }
       AudioProperties *audioProperties() const { return this->get_override("audioProperties")(); }
       bool save() { return this->get_override("save")(); }
+    protected:
+      FileWrap(const char *file) : File(file) { }
   };
 }
 

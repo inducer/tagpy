@@ -25,6 +25,20 @@ using namespace std;
 
 
 
+#define TAGPY_TAGLIB_HEX_VERSION \
+  (TAGLIB_MAJOR_VERSION << 16) + \
+  (TAGLIB_MINOR_VERSION << 8) + \
+  (TAGLIB_PATCH_VERSION << 0)
+
+#if (TAGPY_TAGLIB_HEX_VERSION < 0x10400)
+#warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#warning TagPy is meant to wrap TagLib 1.4 and above.
+#warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#endif 
+
+
+
+
 namespace {
   template<typename Iterator>
   inline object make_list(Iterator first, Iterator last)

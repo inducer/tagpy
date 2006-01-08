@@ -19,7 +19,7 @@ LIBRARIES = TAGLIB_LIBRARIES + BOOST_LIBRARIES
 EXTRA_COMPILE_ARGS = []
 
 setup(name="tagpy",
-      version="0.90",
+      version="0.90.1",
       description="TagLib bindings",
       author=u"Andreas Kloeckner",
       author_email="inform@tiker.net",
