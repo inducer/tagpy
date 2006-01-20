@@ -123,21 +123,13 @@ BOOST_PYTHON_MODULE(_tagpy)
   {
     typedef Tag cl;
     class_<TagWrap, boost::noncopyable>("Tag", no_init)
-      .DEF_VIRTUAL_METHOD(title)
-      .DEF_VIRTUAL_METHOD(artist)
-      .DEF_VIRTUAL_METHOD(album)
-      .DEF_VIRTUAL_METHOD(comment)
-      .DEF_VIRTUAL_METHOD(genre)
-      .DEF_VIRTUAL_METHOD(year)
-      .DEF_VIRTUAL_METHOD(track)
-      
-      .DEF_VIRTUAL_METHOD(setTitle)
-      .DEF_VIRTUAL_METHOD(setArtist)
-      .DEF_VIRTUAL_METHOD(setAlbum)
-      .DEF_VIRTUAL_METHOD(setComment)
-      .DEF_VIRTUAL_METHOD(setGenre)
-      .DEF_VIRTUAL_METHOD(setYear)
-      .DEF_VIRTUAL_METHOD(setTrack)
+      .add_property("title", &cl::title, &cl::setTitle)
+      .add_property("artist", &cl::artist, &cl::setArtist)
+      .add_property("album", &cl::album, &cl::setAlbum)
+      .add_property("comment", &cl::comment, &cl::setComment)
+      .add_property("genre", &cl::genre, &cl::setGenre)
+      .add_property("year", &cl::year, &cl::setYear)
+      .add_property("track", &cl::track, &cl::setTrack)
       
       .DEF_VIRTUAL_METHOD(isEmpty)
       ;
@@ -146,10 +138,10 @@ BOOST_PYTHON_MODULE(_tagpy)
   {
     typedef AudioProperties cl;
     class_<AudioPropertiesWrap, boost::noncopyable>("AudioProperties", no_init)
-      .def("length", pure_virtual(&AudioProperties::length))
-      .def("bitrate", pure_virtual(&AudioProperties::bitrate))
-      .def("sampleRate", pure_virtual(&AudioProperties::sampleRate))
-      .def("channels", pure_virtual(&AudioProperties::channels))
+      .add_property("length", &cl::length)
+      .add_property("bitrate", &cl::bitrate)
+      .add_property("sampleRate", &cl::sampleRate)
+      .add_property("channels", &cl::channels)
       ;
   }
 
