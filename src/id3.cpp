@@ -343,8 +343,8 @@ void exposeID3()
        no_init
        )
       .ADD_RO_PROPERTY(layer)
-      .ADD_RO_PROPERTY(protectionEnabled)
-      // .ADD_RO_PROPERTY(channelMode)
+      // .ADD_RO_PROPERTY(protectionEnabled) (not implemented in TagLib 1.4)
+      // .ADD_RO_PROPERTY(channelMode) (depends on ChannelMode type)
       .ADD_RO_PROPERTY(isCopyrighted)
       .ADD_RO_PROPERTY(isOriginal)
       ;
