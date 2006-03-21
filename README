@@ -48,7 +48,7 @@ The distribution is preconfigured for this case. You may skip to step
 2.
 
 For other distributions, you need to follow the steps at [5]. Roughly,
-you must accomplish the following things:
+you must follow the following things:
 
 - Download a Boost release.
 
@@ -71,6 +71,7 @@ you must accomplish the following things:
   - /usr/lib
   - a directory on LD_LIBRARY_PATH
   - or something mentioned in /etc/ld.so.conf
+  - /usr/local/lib (check that it is in /etc/ld.so.conf!)
 
   You should also create a symbolic link called "libboost_python.so"
   to the main .so file.
@@ -84,7 +85,7 @@ Install TagLib from [1], using the usual
 
   configure; make; make install
 
-For details, you may consult the file `INSTALL'
+For details, you may consult the file `INSTALL' in the TagLib distribution.
 
 Step 3: Installing TagPy
 -------
