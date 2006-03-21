@@ -335,35 +335,52 @@ void exposeID3()
     .value("AllTags", MPEG::File::AllTags)
     ;
 
-  class_<MPEG::File, boost::noncopyable>("mpeg_File",
-                     init<const char *, optional<bool, AudioProperties::ReadStyle> >())
-    .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
-    .def("save", 
-         (bool (MPEG::File::*)(int, bool))
-         &MPEG::File::save,
-         save_overloads())
-    .def("ID3v1Tag", 
-         (ID3v1::Tag *(MPEG::File::*)(bool))
-         &MPEG::File::ID3v1Tag,
-         ID3v1Tag_overloads()[return_internal_reference<>()])
-    .def("ID3v2Tag", 
-         (ID3v2::Tag *(MPEG::File::*)(bool))
-         &MPEG::File::ID3v2Tag,
-         ID3v2Tag_overloads()[return_internal_reference<>()])
-    .def("APETag", 
-         (APE::Tag *(MPEG::File::*)(bool))
-         &MPEG::File::APETag,
-         APETag_overloads()[return_internal_reference<>()])
-    .def("strip", 
-         (bool (MPEG::File::*)(int))
-         &MPEG::File::strip,
-         strip_overloads())
-    .def("setID3v2FrameFactory", &MPEG::File::setID3v2FrameFactory)
-    .def("firstFrameOffset", &MPEG::File::firstFrameOffset)
-    .def("nextFrameOffset", &MPEG::File::nextFrameOffset)
-    .def("previousFrameOffset", &MPEG::File::previousFrameOffset)
-    .def("lastFrameOffset", &MPEG::File::lastFrameOffset)
-    ;
+  {
+    typedef MPEG::Properties cl;
+    class_<cl, bases<AudioProperties>, boost::noncopyable>
+      ("mpeg_Properties", 
+       //init<File *, AudioProperties::ReadStyle>()
+       no_init
+       )
+      .ADD_RO_PROPERTY(layer)
+      .ADD_RO_PROPERTY(protectionEnabled)
+      // .ADD_RO_PROPERTY(channelMode)
+      .ADD_RO_PROPERTY(isCopyrighted)
+      .ADD_RO_PROPERTY(isOriginal)
+      ;
+  }
+
+  {
+    typedef MPEG::File cl;
+    class_<MPEG::File, bases<File>, boost::noncopyable>
+      ("mpeg_File", 
+       init<const char *, optional<bool, AudioProperties::ReadStyle> >())
+      .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
+      .def("save", 
+           (bool (MPEG::File::*)(int, bool))
+           &cl::save,
+           save_overloads())
+      .def("ID3v1Tag", 
+           (ID3v1::Tag *(MPEG::File::*)(bool))
+           &cl::ID3v1Tag,
+           ID3v1Tag_overloads()[return_internal_reference<>()])
+      .def("ID3v2Tag", 
+           (ID3v2::Tag *(MPEG::File::*)(bool))
+           &cl::ID3v2Tag,
+           ID3v2Tag_overloads()[return_internal_reference<>()])
+      .def("APETag", 
+           (APE::Tag *(cl::*)(bool)) &cl::APETag,
+           APETag_overloads()[return_internal_reference<>()])
+      .def("strip", 
+           (bool (cl::*)(int)) &cl::strip,
+           strip_overloads())
+      .DEF_SIMPLE_METHOD(setID3v2FrameFactory)
+      .DEF_SIMPLE_METHOD(firstFrameOffset)
+      .DEF_SIMPLE_METHOD(nextFrameOffset)
+      .DEF_SIMPLE_METHOD(previousFrameOffset)
+      .DEF_SIMPLE_METHOD(lastFrameOffset)
+      ;
+  }
 
   // MISSING: Header, XingHeader
 }

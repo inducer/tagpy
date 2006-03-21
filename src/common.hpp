@@ -21,6 +21,8 @@ using namespace std;
   def(#NAME, (CAST) &cl::NAME, NAME##_overloads())
 #define ENUM_VALUE(NAME) \
   value(#NAME, scope::NAME)
+#define ADD_RO_PROPERTY(NAME) \
+  add_property(#NAME, &cl::NAME)
 
 
 
