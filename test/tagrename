@@ -24,8 +24,43 @@ def is_directory(name):
     import stat
     return stat.S_ISDIR(dirstat.st_mode)
 
+def force_us_ascii(str):
+    result = ""
+    for i in str:
+        if 32 <= ord(i) < 128:
+            result += chr(ord(i))
+        else:
+            result += "_"
+    return result
+
+def makedirs(name, mode=0777):
+    # stolen and modified from os
+    """makedirs(path [, mode=0777])
+
+    Super-mkdir; create a leaf directory and all intermediate ones.
+    Works like mkdir, except that any intermediate path segment (not
+    just the rightmost) will be created if it does not exist.  This is
+    recursive.
+
+    """
+    head, tail = os.path.split(name)
+    while not tail:
+        head, tail = os.path.split(head)
+    if head and tail and not os.path.exists(head):
+        makedirs(head, mode)
+    try:
+        os.mkdir(name, mode)
+    except OSError:
+        pass
+
 def make_fn_suitable(str):
-    return str.replace("/", "_")
+    return force_us_ascii(str
+                          .replace("/", "_")
+                          .replace("?", "_")
+                          .replace("*", "_")
+                          .replace("&", "_")
+                          .replace(":", "_")
+                          )
 
 for song_fn in songs:
     song = tagpy.FileRef(song_fn).file()
@@ -33,21 +68,24 @@ for song_fn in songs:
         print "WARNING: Not a media file:\n  %s" % song_fn
         continue
     tag = song.tag()
-    dest_name = pattern \
+    dest_name = os.path.normpath(pattern \
                 .replace("${artist}", make_fn_suitable(tag.artist.strip()))\
                 .replace("${title}", make_fn_suitable(tag.title.strip()))\
                 .replace("${track}", "%02d" % tag.track)\
                 .replace("${album}", make_fn_suitable(tag.album.strip()))\
-                .replace("${ext}", canonical_ext(song))
+                .replace("${ext}", canonical_ext(song)))
 
-    dirname = os.path.dirname(dest_name)
+    dirname = os.path.dirname(dest_name).lower()
     fname = os.path.basename(dest_name)
+    dest_name = os.path.join(dirname, fname)
+    print song_fn, dest_name,dirname
+
     try:
         if not is_directory(dirname):
             print "WARNING: %s exists, but is not a directory, skipping\n  %s" % \
                   (dirname, dest_name)
             continue
     except OSError:
-        os.makedirs(dirname)
+        makedirs(dirname)
 
-    os.rename(song_fn, dest_name.encode("utf8"))
+    os.rename(song_fn, dest_name)
