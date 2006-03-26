@@ -1,0 +1,53 @@
+#! /usr/bin/env python
+
+import sys
+import os
+import os.path
+import tagpy
+import tagpy.mpeg
+import tagpy.ogg
+
+songs = sys.argv[1:]
+
+pattern = "${artist}/${album}/${track}-${title}.${ext}"
+
+def canonical_ext(song):
+    if isinstance(song, tagpy.mpeg.File):
+        return "mp%d" % song.audioProperties().layer
+    elif isinstance(song, tagpy.ogg.File):
+        return "ogg"
+    else:
+        raise ValueError, "unknown song type"
+
+def is_directory(name):
+    dirstat = os.stat(name)
+    import stat
+    return stat.S_ISDIR(dirstat.st_mode)
+
+def make_fn_suitable(str):
+    return str.replace("/", "_")
+
+for song_fn in songs:
+    song = tagpy.FileRef(song_fn).file()
+    if song is None:
+        print "WARNING: Not a media file:\n  %s" % song_fn
+        continue
+    tag = song.tag()
+    dest_name = pattern \
+                .replace("${artist}", make_fn_suitable(tag.artist.strip()))\
+                .replace("${title}", make_fn_suitable(tag.title.strip()))\
+                .replace("${track}", "%02d" % tag.track)\
+                .replace("${album}", make_fn_suitable(tag.album.strip()))\
+                .replace("${ext}", canonical_ext(song))
+
+    dirname = os.path.dirname(dest_name)
+    fname = os.path.basename(dest_name)
+    try:
+        if not is_directory(dirname):
+            print "WARNING: %s exists, but is not a directory, skipping\n  %s" % \
+                  (dirname, dest_name)
+            continue
+    except OSError:
+        os.makedirs(dirname)
+
+    os.rename(song_fn, dest_name.encode("utf8"))
