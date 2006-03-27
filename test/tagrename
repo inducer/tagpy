@@ -3,13 +3,25 @@
 import sys
 import os
 import os.path
+import re
 import tagpy
 import tagpy.mpeg
 import tagpy.ogg
 
 songs = sys.argv[1:]
 
-pattern = "${artist}/${album}/${track}-${title}.${ext}"
+patterns = [
+ "${artist:7}-${album:7}/${track}-${title}.${ext}",
+ "${artist}/${album}/${track}-${title}.${ext}",
+ ]
+mix_pattern = "AAAMIX/${artist:7}-${title}.${ext}"
+
+for i, p in enumerate(patterns):
+    print i, p
+print
+
+pattern = patterns[int(raw_input("Select pattern: "))]
+use_mix = raw_input("Use AAAMIX directory? [n]y?") == "y"
 
 def canonical_ext(song):
     if isinstance(song, tagpy.mpeg.File):
@@ -62,30 +74,64 @@ def make_fn_suitable(str):
                           .replace(":", "_")
                           )
 
-for song_fn in songs:
-    song = tagpy.FileRef(song_fn).file()
-    if song is None:
-        print "WARNING: Not a media file:\n  %s" % song_fn
-        continue
+def expand_pattern(pattern, song):
     tag = song.tag()
-    dest_name = os.path.normpath(pattern \
-                .replace("${artist}", make_fn_suitable(tag.artist.strip()))\
-                .replace("${title}", make_fn_suitable(tag.title.strip()))\
-                .replace("${track}", "%02d" % tag.track)\
-                .replace("${album}", make_fn_suitable(tag.album.strip()))\
-                .replace("${ext}", canonical_ext(song)))
+    expr = re.compile(r"\$\{([a-z]+)(\:[0-9]+)?\}")
 
-    dirname = os.path.dirname(dest_name).lower()
-    fname = os.path.basename(dest_name)
-    dest_name = os.path.join(dirname, fname)
-    print song_fn, dest_name,dirname
+    def variable_function(match):
+        meta_id = match.group(1)
+
+        if meta_id == "artist": result =  tag.artist
+        elif meta_id == "album": result =  tag.album
+        elif meta_id == "title": result =  tag.title
+        elif meta_id == "ext": result =  canonical_ext(song)
+        elif meta_id == "track": result =  "%02d" % tag.track
+        else: 
+            raise ValueError, "invalid variable in pattern: "+meta_id
+
+        if len(match.groups()) == 2 and match.group(2):
+            result = result[:int(match.group(2)[1:])]
+        return make_fn_suitable(result).strip()
+
+    return expr.sub(variable_function, pattern)
+
+def get_new_dir_and_name(pattern, song):
+    dest_name = expand_pattern(pattern, song)
+    dest_dir = os.path.dirname(dest_name).lower()
+    dest_basename = os.path.basename(dest_name)
+    return dest_dir, os.path.join(dest_dir, dest_basename)
+
+# walk directory tree
+all_songs = []
+for dirpath, dirnames, filenames in os.walk(sys.argv[1]):
+    all_songs += [os.path.join(dirpath, filename) for filename in filenames]
+
+# find out all "canonical" renames, i.e. without mix directory
+dest_dir_counts = {}
+renames = []
+
+for source_name in all_songs:
+    song = tagpy.FileRef(source_name).file()
+    if song is None:
+        print "WARNING: Not a media file:\n  %s" % source_name
+        continue
+
+    dest_dir, dest_name = get_new_dir_and_name(pattern, song)
+
+    renames.append((source_name, dest_name, dest_dir, song))
+    dest_dir_counts[dest_dir] = 1 + dest_dir_counts.setdefault(dest_dir, 0)
+
+# judge mix directory and perform moves
+for source_name, dest_name, dest_dir, song in renames:
+    if dest_dir_counts[dest_dir] == 1:
+        dest_dir, dest_name = get_new_dir_and_name(mix_pattern, song)
 
     try:
-        if not is_directory(dirname):
+        if not is_directory(dest_dir):
             print "WARNING: %s exists, but is not a directory, skipping\n  %s" % \
-                  (dirname, dest_name)
+                  (dest_dir, dest_name)
             continue
     except OSError:
-        makedirs(dirname)
+        makedirs(dest_dir)
 
-    os.rename(song_fn, dest_name)
+    os.rename(source_name, dest_name)
