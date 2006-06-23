@@ -8,6 +8,8 @@ import tagpy
 import tagpy.mpeg
 import tagpy.ogg
 
+from optparse import OptionParser
+
 songs = sys.argv[1:]
 
 patterns = [
@@ -16,12 +18,28 @@ patterns = [
  ]
 mix_pattern = "AAAMIX/${artist:7}-${title}.${ext}"
 
-for i, p in enumerate(patterns):
-    print i, p
-print
+opt_parse = OptionParser(usage="%prog [options] root_path")
+opt_parse.add_option("-p", "--pattern", dest="pattern",
+                     help="Use PATTERN as the rename pattern")
+opt_parse.add_option("-m", "--use-mix", action="store_true", dest="use_mix",
+                     help="Use aaamix directory")
+opt_parse.add_option("-M", "--no-use-mix", action="store_false", dest="use_mix",
+                     help="Do not use aaamix directory")
 
-pattern = patterns[int(raw_input("Select pattern: "))]
-use_mix = raw_input("Use AAAMIX directory? [n]y?") == "y"
+(options, remaining_args) = opt_parse.parse_args()
+
+if options.pattern is not None:
+    pattern = patterns[int(options.pattern)]
+else:
+    for i, p in enumerate(patterns):
+        print i, p
+    print
+
+    pattern = patterns[int(raw_input("Select pattern: "))]
+if options.use_mix is not None:
+    use_mix = options.use_mix
+else:
+    use_mix = raw_input("Use AAAMIX directory? [n]y?") == "y"
 
 def canonical_ext(song):
     if isinstance(song, tagpy.mpeg.File):
@@ -103,7 +121,7 @@ def get_new_dir_and_name(pattern, song):
 
 # walk directory tree
 all_songs = []
-for dirpath, dirnames, filenames in os.walk(sys.argv[1]):
+for dirpath, dirnames, filenames in os.walk(remaining_args[0]):
     all_songs += [os.path.join(dirpath, filename) for filename in filenames]
 
 # find out all "canonical" renames, i.e. without mix directory
@@ -123,7 +141,7 @@ for source_name in all_songs:
 
 # judge mix directory and perform moves
 for source_name, dest_name, dest_dir, song in renames:
-    if dest_dir_counts[dest_dir] == 1:
+    if use_mix and dest_dir_counts[dest_dir] == 1:
         dest_dir, dest_name = get_new_dir_and_name(mix_pattern, song)
 
     try:
