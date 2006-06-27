@@ -19,7 +19,7 @@ LIBRARIES = TAGLIB_LIBRARIES + BOOST_LIBRARIES
 EXTRA_COMPILE_ARGS = []
 
 setup(name="tagpy",
-      version="0.91",
+      version="0.92",
       description="Bindings for TagLib",
       long_description="Binds Python to Scott Wheeler's TagLib. " +
       "Makes it easy to read ID3 tags from MP3 files, "+
