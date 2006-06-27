@@ -81,6 +81,9 @@ you must follow the following things:
 Step 2: Installing TagLib
 -------
 
+In Debian, it suffices to do "aptitude install libtag1-dev".  The distribution
+is preconfigured for this case. You may skip to step 3.
+
 Install TagLib from [1], using the usual 
 
   configure; make; make install
