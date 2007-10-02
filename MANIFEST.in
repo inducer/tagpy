@@ -2,3 +2,7 @@ include test/la.*
 include test/*.py
 include src/wrapper/common.hpp
 include test/tagrename
+include configure
+include Makefile.in
+include configvars.py
+include siteconf.py.in

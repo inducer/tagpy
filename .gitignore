@@ -4,3 +4,5 @@ siteconf.py
 Makefile
 .*.swp
 tags
+dist
+MANIFEST
