@@ -32,9 +32,12 @@ namespace
       /* id3v2_FrameWrap(ID3v2::Header *h) : ID3v2::Frame(h) { } */
   };
   
+  void id3v2_Tag_addFrame(ID3v2::Tag &t, ID3v2::Frame *f)
+  {
+    ID3v2::Frame *f_clone = ID3v2::FrameFactory::instance()->createFrame(f->render());
+    t.addFrame(f_clone);
+  }
 
-  void id3v2_Tag_removeFrame(ID3v2::Tag &t, ID3v2::Frame *f) { t.removeFrame(f); }
-  
   object id3v2_rvf_channels(const ID3v2::RelativeVolumeFrame &rvf)
   {
     List<ID3v2::RelativeVolumeFrame::ChannelType> l = rvf.channels();
@@ -97,22 +100,25 @@ void exposeID3()
     // MISSING: text encoding
     ;
 
-  class_<id3v2_FrameWrap, boost::noncopyable>("id3v2_Frame", no_init)
-    .def("frameID", &ID3v2::Frame::frameID)
-    .def("size", &ID3v2::Frame::size)
-    .def("setData", &ID3v2::Frame::setData)
-    .def("setText", &ID3v2::Frame::setText)
-    .def("toString", pure_virtual(&ID3v2::Frame::toString))
-    .def("render", &ID3v2::Frame::render)
+  {
+    typedef ID3v2::Frame cl;
+    class_<id3v2_FrameWrap, boost::noncopyable>("id3v2_Frame", no_init)
+      .DEF_SIMPLE_METHOD(frameID)
+      .DEF_SIMPLE_METHOD(size)
+      .DEF_SIMPLE_METHOD(setData)
+      .DEF_SIMPLE_METHOD(setText)
+      .def("toString", pure_virtual(&ID3v2::Frame::toString))
+      .DEF_SIMPLE_METHOD(render)
 
-    .def("headerSize", 
-         (TagLib::uint (*)()) 
-         &ID3v2::Frame::headerSize)
-    .def("headerSize", 
-         (TagLib::uint (*)(TagLib::uint)) 
-         &ID3v2::Frame::headerSize)
-    // MISSING: textDelimiter
-    ;
+      .def("headerSize", 
+           (TagLib::uint (*)()) 
+           &ID3v2::Frame::headerSize)
+      .def("headerSize", 
+           (TagLib::uint (*)(TagLib::uint)) 
+           &ID3v2::Frame::headerSize)
+      // MISSING: textDelimiter
+      ;
+  }
 
   {
     typedef ID3v2::Header cl;
@@ -171,7 +177,7 @@ void exposeID3()
       .def("frameList", fl1, return_internal_reference<>())
       .def("frameList", fl2, return_internal_reference<>())
       
-      .DEF_SIMPLE_METHOD(addFrame)
+      .def("addFrame", id3v2_Tag_addFrame)
       .DEF_SIMPLE_METHOD(removeFrame)
       .DEF_SIMPLE_METHOD(removeFrames)
       

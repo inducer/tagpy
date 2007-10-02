@@ -24,6 +24,12 @@ Andreas Kloeckner <inform@tiker.net>
 [3] http://www.boost.org
 [4] http://news.tiker.net/software/tagpy
 
+Acknowledgements
+================
+
+- Andreas Hemel <debian-bugs@daishan.de> sent a patch for a crash bug.
+- Michal Čihař <nijel@debian.org> maintains the Debian package.
+
 Building TagPy
 ==============
 
