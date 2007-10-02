@@ -152,4 +152,7 @@ for source_name, dest_name, dest_dir, song in renames:
     except OSError:
         makedirs(dest_dir)
 
-    os.rename(source_name, dest_name)
+    try:
+      os.rename(source_name, dest_name)
+    except OSError, e:
+      print "Couldn't rename `%s' to `%s': %s" % (source_name, dest_name, e)
