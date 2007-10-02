@@ -1,2 +1,6 @@
 *~
 build
+siteconf.py
+Makefile
+.*.swp
+tags

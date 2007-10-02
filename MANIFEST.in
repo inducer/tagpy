@@ -1,4 +1,4 @@
 include test/la.*
 include test/*.py
-include src/common.hpp
+include src/wrapper/common.hpp
 include test/tagrename
