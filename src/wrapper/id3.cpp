@@ -86,19 +86,26 @@ void exposeID3()
   exposeMap<ByteVector, ID3v2::FrameList>("id3v2_FrameListMap");
   exposePointerList<ID3v2::Frame>("id3v2_FrameList");
 
-  ID3v2::Frame *(ID3v2::FrameFactory::*cf1)(const ByteVector &, bool) const
-    = &ID3v2::FrameFactory::createFrame;
-  ID3v2::Frame *(ID3v2::FrameFactory::*cf2)(const ByteVector &, TagLib::uint) const
-    = &ID3v2::FrameFactory::createFrame;
-  class_<ID3v2::FrameFactory, boost::noncopyable>
-    ("id3v2_FrameFactory", no_init)
-    .def("createFrame", cf1, return_value_policy<manage_new_object>())
-    .def("createFrame", cf2, createFrame_overloads()[return_value_policy<manage_new_object>()])
-    .def("instance", &ID3v2::FrameFactory::instance,
-         return_value_policy<reference_existing_object>())
-    .staticmethod("instance")
-    // MISSING: text encoding
-    ;
+  {
+    typedef ID3v2::FrameFactory cl;
+
+    ID3v2::Frame *(ID3v2::FrameFactory::*cf1)(const ByteVector &, bool) const
+      = &cl::createFrame;
+    ID3v2::Frame *(ID3v2::FrameFactory::*cf2)(const ByteVector &, TagLib::uint) const
+      = &cl::createFrame;
+
+    class_<ID3v2::FrameFactory, boost::noncopyable>
+      ("id3v2_FrameFactory", no_init)
+      .def("createFrame", cf1, return_value_policy<manage_new_object>())
+      .def("createFrame", cf2, createFrame_overloads()[return_value_policy<manage_new_object>()])
+      .def("instance", &cl::instance, 
+          return_value_policy<reference_existing_object>())
+      .staticmethod("instance")
+
+      .DEF_SIMPLE_METHOD(defaultTextEncoding)
+      .DEF_SIMPLE_METHOD(setDefaultTextEncoding)
+      ;
+  }
 
   {
     typedef ID3v2::Frame cl;
