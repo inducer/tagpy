@@ -44,53 +44,6 @@ namespace
         }
   };
 
-  class UTF8Intermediate
-  {
-    private:
-      std::string m_utf8;
-      static const int utf8_max_len = 6;
-
-    public:
-      UTF8Intermediate(const std::wstring &wstr)
-      {
-        for (unsigned i = 0; i < wstr.size(); i++)
-        {
-          unsigned char buffer[utf8_max_len];
-          int utf8len = ucs4_to_utf8(wstr[i], buffer);
-          m_utf8.append(reinterpret_cast<char *>(buffer), utf8len);
-        }
-        std::cout << "AFAA" << m_utf8 << std::endl;
-      }
-
-      operator String() const
-      {
-        String result(m_utf8.c_str(), String::UTF8);
-        std::cout << "AFAA***" << result << std::endl;
-        return String(m_utf8, String::UTF8);
-      }
-
-    private:
-      static int ucs4_to_utf8(wchar_t ucs4, unsigned char dest[utf8_max_len])
-      {
-          int	bits;
-          unsigned char *d = dest;
-          
-          if      (ucs4 <       0x80) {  *d++=  ucs4;                         bits= -6; }
-          else if (ucs4 <      0x800) {  *d++= ((ucs4 >>  6) & 0x1F) | 0xC0;  bits=  0; }
-          else if (ucs4 <    0x10000) {  *d++= ((ucs4 >> 12) & 0x0F) | 0xE0;  bits=  6; }
-          else if (ucs4 <   0x200000) {  *d++= ((ucs4 >> 18) & 0x07) | 0xF0;  bits= 12; }
-          else if (ucs4 <  0x4000000) {  *d++= ((ucs4 >> 24) & 0x03) | 0xF8;  bits= 18; }
-          else if (ucs4 < 0x80000000) {  *d++= ((ucs4 >> 30) & 0x01) | 0xFC;  bits= 24; }
-          else return 0;
-
-          for ( ; bits >= 0; bits-= 6) {
-              *d++= ((ucs4 >> bits) & 0x3F) | 0x80;
-          }
-          return d - dest;
-      }
-  };
-
-
 
 
 
@@ -157,8 +110,7 @@ BOOST_PYTHON_MODULE(_tagpy)
   // -------------------------------------------------------------
   to_python_converter<String, tlstring_to_unicode>();
   to_python_converter<ByteVector, tlbytevector_to_string>();
-  implicitly_convertible<std::wstring, UTF8Intermediate>();
-  implicitly_convertible<UTF8Intermediate, String>();
+  implicitly_convertible<std::wstring, String>();
   implicitly_convertible<std::string, ByteVectorIntermediate>();
   implicitly_convertible<ByteVectorIntermediate, ByteVector>();
 
