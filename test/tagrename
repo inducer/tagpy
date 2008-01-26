@@ -90,10 +90,15 @@ def make_fn_suitable(str):
                           .replace("*", "_")
                           .replace("&", "_")
                           .replace(":", "_")
+                          .replace("\"", "_")
+                          .replace("\'", "_")
                           )
 
 def expand_pattern(pattern, song):
     tag = song.tag()
+    if tag is None:
+        return None
+
     expr = re.compile(r"\$\{([a-z]+)(\:[0-9]+)?\}")
 
     def variable_function(match):
@@ -115,6 +120,9 @@ def expand_pattern(pattern, song):
 
 def get_new_dir_and_name(pattern, song):
     dest_name = expand_pattern(pattern, song)
+    if dest_name is None:
+        return None
+
     dest_dir = os.path.dirname(dest_name).lower()
     dest_basename = os.path.basename(dest_name)
     return dest_dir, os.path.join(dest_dir, dest_basename)
@@ -134,10 +142,12 @@ for source_name in all_songs:
         print "WARNING: Not a media file:\n  %s" % source_name
         continue
 
-    dest_dir, dest_name = get_new_dir_and_name(pattern, song)
+    dir_and_name = get_new_dir_and_name(pattern, song)
+    if dir_and_name is not None:
+        dest_dir, dest_name = get_new_dir_and_name(pattern, song)
 
-    renames.append((source_name, dest_name, dest_dir, song))
-    dest_dir_counts[dest_dir] = 1 + dest_dir_counts.setdefault(dest_dir, 0)
+        renames.append((source_name, dest_name, dest_dir, song))
+        dest_dir_counts[dest_dir] = 1 + dest_dir_counts.setdefault(dest_dir, 0)
 
 # judge mix directory and perform moves
 for source_name, dest_name, dest_dir, song in renames:
