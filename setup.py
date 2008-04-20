@@ -34,10 +34,10 @@ def main():
     setup(name="tagpy",
           version="0.94",
           description="Python Bindings for TagLib",
-          long_description="
+          long_description="""
           TagPy is a set of Python bindings for Scott Wheeler's 
           `TagLib <http://developer.kde.org/~wheeler/taglib.html>`_. 
-          It builds upon `Boost.Python <http://www.boost.org/libs/python/doc/>_, 
+          It builds upon `Boost.Python <http://www.boost.org/libs/python/doc/>`_, 
           a wrapper generation library which is part of the renowned Boost 
           set of C++ libraries.
 
@@ -51,7 +51,7 @@ def main():
           All these features have their own specific interfaces, but 
           TagLib's generic tag reading and writing mechanism is also 
           supported. It comes with a bunch of examples.
-          ",
+          """,
           author=u"Andreas Kloeckner",
           author_email="inform@tiker.net",
           classifiers=
