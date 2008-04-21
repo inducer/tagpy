@@ -6,3 +6,5 @@ Makefile
 tags
 dist
 MANIFEST
+*.pyc
+*.egg-info
