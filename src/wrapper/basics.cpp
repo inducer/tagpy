@@ -86,6 +86,7 @@ namespace
 
   struct FileWrap : File, wrapper<File>
   {
+    public:
       Tag *tag() const { return this->get_override("tag")(); }
       AudioProperties *audioProperties() const { return this->get_override("audioProperties")(); }
       bool save() { return this->get_override("save")(); }
@@ -176,18 +177,21 @@ BOOST_PYTHON_MODULE(_tagpy)
     .value("UTF16LE", String::UTF16LE)
     ;
 
-  class_<FileRef>(
-    "FileRef", 
-    init<const char *, optional<bool, AudioProperties::ReadStyle> >())
-    .def("tag", &FileRef::tag,
-         return_internal_reference<>())
-    .def("audioProperties", &FileRef::audioProperties, 
-         return_internal_reference<>())
-    .def("file", &FileRef::file,
-         return_internal_reference<>())
-    .def("save", &FileRef::save)
-    .def("isNull", &FileRef::isNull)
-    ;
+  {
+    typedef FileRef cl;
+    class_<cl>(
+        "FileRef", 
+        init<const char *, optional<bool, AudioProperties::ReadStyle> >())
+      .def("tag", &cl::tag, return_internal_reference<>())
+      .def("audioProperties", &cl::audioProperties, 
+          return_internal_reference<>())
+      .def("file", &cl::file, return_internal_reference<>())
+      .DEF_SIMPLE_METHOD(isNull)
+      .DEF_SIMPLE_METHOD(save)
+      .DEF_SIMPLE_METHOD(defaultFileExtensions)
+      .staticmethod("defaultFileExtensions")
+      ;
+  }
 
   exposeID3();
   exposeRest();

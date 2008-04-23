@@ -149,7 +149,7 @@ Using TagPy is as simple as this:
 
 >>> import tagpy
 >>> f = tagpy.FileRef("la.mp3")
->>> f.tag().artist()
+>>> f.tag().artist
 u'Andreas'
 
 The test/ directory contains a few more examples. 
