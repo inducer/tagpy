@@ -136,13 +136,13 @@ namespace {
   template<typename Value>
   void exposeList(const char *name)
   {
-    typedef List<Value *> list;
+    typedef List<Value> list;
     class_<list>(name)
       .def("__len__", &list::size)
       .def("size", &list::size)
       .def("clear", &list::clear, return_self<>())
       .def("isEmpty", &list::isEmpty)
-      .def("__getitem__", List_getitem<Value>, return_internal_reference<>())
+      .def("__getitem__", List_getitem<Value>, return_value_policy<return_by_value>())
       .def("__setitem__", List_setitem<Value>)
       .def("append", List_append<Value>)
       // MISSING: iterators, insert, find, contains, erase,

@@ -118,7 +118,13 @@ BOOST_PYTHON_MODULE(_tagpy)
   // -------------------------------------------------------------
   // Basics
   // -------------------------------------------------------------
-  exposeList<StringList>("StringList");
+  exposeList<String>("StringListBase");
+
+  {
+    typedef StringList cl;
+    class_<cl, bases<List<String> > >("StringList")
+      ;
+  }
 
   {
     typedef Tag cl;
