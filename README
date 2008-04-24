@@ -22,7 +22,7 @@ Andreas Kloeckner <inform@tiker.net>
 [1] http://developer.kde.org/~wheeler/taglib.html
 [2] http://www.boost.org/libs/python/doc/
 [3] http://www.boost.org
-[4] http://news.tiker.net/software/tagpy
+[4] http://mathema.tician.de/software/tagpy
 
 Acknowledgements
 ================
@@ -30,6 +30,8 @@ Acknowledgements
 - Andreas Hemel <debian-bugs@daishan.de> sent a patch for a crash bug.
 - Michal Čihař <nijel@debian.org> maintains the Debian package.
 - Keith Packard wrote a UCS4 to UTF8 routine that I shamelessly stole.
+- Christoph Burgmer wrote the initial version of the new Python-only
+  FileRef.
 
 Here's his copyright:
 
