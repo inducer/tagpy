@@ -1,6 +1,29 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
 
+# Copyright (c) 2006-2008 Andreas Kloeckner, Christoph Burgmer
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+
+
 def get_config_schema():
     from aksetup_helper import ConfigSchema, Option, \
             IncludeDir, LibraryDir, Libraries, \
@@ -27,14 +50,14 @@ def main():
     from aksetup_helper import hack_distutils, get_config, setup, Extension
 
     hack_distutils()
-    conf = get_config()
+    conf = get_config(get_config_schema())
 
     INCLUDE_DIRS = conf["TAGLIB_INC_DIR"] + conf["BOOST_INC_DIR"]
     LIBRARY_DIRS = conf["TAGLIB_LIB_DIR"] + conf["BOOST_LIB_DIR"]
     LIBRARIES = conf["TAGLIB_LIBNAME"] + conf["BOOST_PYTHON_LIBNAME"]
 
     setup(name="tagpy",
-          version="0.94.3",
+          version="0.94.4",
           description="Python Bindings for TagLib",
           long_description="""
           TagPy is a set of Python bindings for Scott Wheeler's 
@@ -59,7 +82,7 @@ def main():
           classifiers=
           [ "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
-            "License :: OSI Approved :: BSD License",
+            "License :: OSI Approved :: MIT License",
             "Natural Language :: English",
             "Operating System :: OS Independent",
             "Operating System :: POSIX",
@@ -70,7 +93,7 @@ def main():
             "Topic :: Multimedia :: Sound/Audio :: Editors",
             "Topic :: Software Development :: Libraries :: Python Modules",
             "Topic :: Utilities"],
-          license = "BSD-Style",
+          license = "MIT",
 
           url="http://mathema.tician.de/software/tagpy",
           packages=["tagpy", "tagpy.ogg"],
