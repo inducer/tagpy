@@ -39,9 +39,6 @@ class FileTypeResolver(object):
 class FileRef(object):
     fileTypeResolvers = []
 
-    def __init__(self):
-        self._file = None
-
     def __init__(self, f, readAudioProperties=True, 
             audioPropertiesStyle=ReadStyle.Average):
         if isinstance(f, FileRef):
@@ -49,7 +46,8 @@ class FileRef(object):
         elif isinstance(f, File):
             self._file = f
         else:
-            self._file = FileRef.create(f, readAudioProperties)
+            self._file = FileRef.create(f, readAudioProperties,
+                audioPropertiesStyle)
 
     def tag(self):
         return self._file.tag()
