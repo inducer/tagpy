@@ -188,7 +188,7 @@ void exposeRest()
   // -------------------------------------------------------------
   {
     typedef FLAC::File cl;
-    class_<cl, boost::noncopyable>("flac_File",
+    class_<cl, boost::noncopyable, bases<File> >("flac_File",
                                    init<const char *, optional<bool, AudioProperties::ReadStyle> >())
       .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
       .def("ID3v1Tag", 
@@ -222,7 +222,7 @@ void exposeRest()
 
   {
     typedef MPC::File cl;
-    class_<MPC::File, boost::noncopyable>
+    class_<MPC::File, bases<File>, boost::noncopyable>
       ("mpc_File", init<const char *, optional<bool, AudioProperties::ReadStyle> >())
       .def("ID3v1Tag", 
            (ID3v1::Tag *(cl::*)(bool))
