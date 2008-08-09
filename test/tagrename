@@ -43,11 +43,14 @@ else:
 
 def canonical_ext(song):
     if isinstance(song, tagpy.mpeg.File):
-        return "mp%d" % song.audioProperties().layer
+        aprops = song.audioProperties()
+        if aprops is None:
+            raise ValueError, "MPEG track %s has no audio properties" % song.name()
+        return "mp%d" % aprops.layer
     elif isinstance(song, tagpy.ogg.File):
         return "ogg"
     else:
-        raise ValueError, "unknown song type"
+        raise ValueError, "unknown track type"
 
 def is_directory(name):
     dirstat = os.stat(name)
@@ -137,8 +140,9 @@ dest_dir_counts = {}
 renames = []
 
 for source_name in all_songs:
-    song = tagpy.FileRef(source_name).file()
-    if song is None:
+    try:
+        song = tagpy.FileRef(source_name).file()
+    except ValueError:
         print "WARNING: Not a media file:\n  %s" % source_name
         continue
 
@@ -146,12 +150,13 @@ for source_name in all_songs:
     if dir_and_name is not None:
         dest_dir, dest_name = get_new_dir_and_name(pattern, song)
 
-        renames.append((source_name, dest_name, dest_dir, song))
+        renames.append((source_name, dest_name, dest_dir))
         dest_dir_counts[dest_dir] = 1 + dest_dir_counts.setdefault(dest_dir, 0)
 
 # judge mix directory and perform moves
-for source_name, dest_name, dest_dir, song in renames:
+for source_name, dest_name, dest_dir in renames:
     if use_mix and dest_dir_counts[dest_dir] == 1:
+        song = tagpy.FileRef(source_name).file()
         dest_dir, dest_name = get_new_dir_and_name(mix_pattern, song)
 
     try:
