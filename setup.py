@@ -55,7 +55,7 @@ def main():
     LIBRARIES = conf["TAGLIB_LIBNAME"] + conf["BOOST_PYTHON_LIBNAME"]
 
     setup(name="tagpy",
-          version="0.94.5",
+          version="0.94.6",
           description="Python Bindings for TagLib",
           long_description="""
           TagPy is a set of Python bindings for Scott Wheeler's 
@@ -78,7 +78,7 @@ def main():
           author=u"Andreas Kloeckner",
           author_email="inform@tiker.net",
           classifiers=
-          [ "Development Status :: 4 - Beta",
+          [ "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",
             "Natural Language :: English",
