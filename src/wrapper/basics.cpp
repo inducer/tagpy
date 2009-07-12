@@ -161,6 +161,8 @@ BOOST_PYTHON_MODULE(_tagpy)
       .add_property("track", &cl::track, &cl::setTrack)
       
       .DEF_VIRTUAL_METHOD(isEmpty)
+      .DEF_SIMPLE_METHOD(duplicate)
+      .staticmethod("duplicate")
       ;
   }
 
