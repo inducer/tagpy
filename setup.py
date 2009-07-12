@@ -95,7 +95,6 @@ def main():
 
           url="http://mathema.tician.de/software/tagpy",
           packages=["tagpy", "tagpy.ogg"],
-          package_dir={"tagpy": "src/python"},
           ext_modules=[ Extension("_tagpy", 
                                   ["src/wrapper/basics.cpp", 
                                    "src/wrapper/id3.cpp",
