@@ -95,6 +95,8 @@ def make_fn_suitable(str):
                           .replace(":", "_")
                           .replace("\"", "_")
                           .replace("\'", "_")
+                          .replace("<", "_")
+                          .replace(">", "_")
                           )
 
 def expand_pattern(pattern, song):
