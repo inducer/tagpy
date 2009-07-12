@@ -8,3 +8,5 @@ dist
 MANIFEST
 *.pyc
 *.egg-info
+*.so
+*.pyd
