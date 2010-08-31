@@ -34,6 +34,7 @@
 #include <textidentificationframe.h>
 #include <uniquefileidentifierframe.h>
 #include <unknownframe.h>
+#include <unsynchronizedlyricsframe.h>
 #include <apetag.h>
 
 #include "common.hpp"
@@ -326,6 +327,20 @@ void exposeID3()
       .DEF_SIMPLE_METHOD(textEncoding)
       .DEF_SIMPLE_METHOD(setTextEncoding)
       .DEF_SIMPLE_METHOD(fieldList)
+      ;
+  }
+
+  {
+    typedef ID3v2::UnsynchronizedLyricsFrame cl;
+    class_<cl, bases<ID3v2::Frame>, boost::noncopyable>
+      ("id3v2_UnsynchronizedLyricsFrame", init<optional<const ByteVector &> >())
+      .def(init<String::Type>())
+      .DEF_SIMPLE_METHOD(language)
+      .DEF_SIMPLE_METHOD(setLanguage)
+      .DEF_SIMPLE_METHOD(description)
+      .DEF_SIMPLE_METHOD(setDescription)
+      .DEF_SIMPLE_METHOD(textEncoding)
+      .DEF_SIMPLE_METHOD(setTextEncoding)
       ;
   }
 

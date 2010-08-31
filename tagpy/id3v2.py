@@ -43,3 +43,5 @@ TextIdentificationFrame = _tagpy.id3v2_TextIdentificationFrame
 UserTextIdentificationFrame = _tagpy.id3v2_UserTextIdentificationFrame
 UniqueFileIdentifierFrame = _tagpy.id3v2_UniqueFileIdentifierFrame
 UnkownFrame = _tagpy.id3v2_UnknownFrame
+UnknownFrame = _tagpy.id3v2_UnknownFrame
+UnsynchronizedLyricsFrame = _tagpy.id3v2_UnsynchronizedLyricsFrame
