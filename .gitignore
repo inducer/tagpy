@@ -10,3 +10,4 @@ MANIFEST
 *.egg-info
 *.so
 *.pyd
+setuptools.pth
