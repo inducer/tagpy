@@ -61,9 +61,9 @@ class FileRef(object):
     def save(self):
         return self._file.save()
 
-    @staticmethod
-    def defaultFileExtensions():
-        return self._getExtToModule.keys()
+    @classmethod
+    def defaultFileExtensions(cls):
+        return cls._getExtToModule.keys()
 
     def isNull(self):
         return not self._file or not self._file.isValid()
