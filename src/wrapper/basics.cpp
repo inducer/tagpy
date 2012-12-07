@@ -51,7 +51,7 @@ namespace
   {
       static PyObject *convert(ByteVector const& s)
         {
-          return PyString_FromStringAndSize(s.data(), s.size());
+          return PyUnicode_FromStringAndSize(s.data(), s.size());
         }
   };
 

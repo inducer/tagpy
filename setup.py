@@ -75,7 +75,7 @@ def main():
           TagLib's generic tag reading and writing mechanism is also 
           supported. It comes with a bunch of examples.
           """,
-          author=u"Andreas Kloeckner",
+          author="Andreas Kloeckner",
           author_email="inform@tiker.net",
           classifiers=
           [ "Development Status :: 5 - Production/Stable",

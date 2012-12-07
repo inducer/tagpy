@@ -107,6 +107,6 @@ class FileRef(object):
         try:
             module = cls._getExtToModule()[ext]
         except KeyError:
-            raise ValueError, "unable to find file type"
+            raise ValueError("unable to find file type")
 
         return module.File(fileName, readAudioProperties, audioPropertiesStyle)
