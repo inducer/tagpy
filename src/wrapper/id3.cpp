@@ -79,6 +79,10 @@ namespace
   MF_OL(setVolumeAdjustment, 1, 2);
   MF_OL(setPeakVolume, 1, 2);
 
+  #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10700)
+    MF_OL(render, 0, 1)
+  #endif
+
   // -------------------------------------------------------------
   // MPEG
   // -------------------------------------------------------------
@@ -212,7 +216,11 @@ void exposeID3()
       .DEF_SIMPLE_METHOD(removeFrame)
       .DEF_SIMPLE_METHOD(removeFrames)
       
-      .DEF_SIMPLE_METHOD(render)
+      #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10700)
+        .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)(int) const)
+      #else
+        .DEF_SIMPLE_METHOD(render)
+      #endif
       ;
   }
 
