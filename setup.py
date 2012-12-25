@@ -55,7 +55,7 @@ def main():
     LIBRARIES = conf["TAGLIB_LIBNAME"] + conf["BOOST_PYTHON_LIBNAME"]
 
     setup(name="tagpy",
-          version="0.94.8",
+          version="2013.1",
           description="Python Bindings for TagLib",
           long_description="""
           TagPy is a set of Python bindings for Scott Wheeler's 
@@ -86,6 +86,7 @@ def main():
             "Operating System :: POSIX",
             "Operating System :: Unix",
             "Programming Language :: Python",
+            "Programming Language :: Python :: 3",
             "Topic :: Multimedia :: Sound/Audio",
             "Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping",
             "Topic :: Multimedia :: Sound/Audio :: Editors",
