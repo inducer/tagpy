@@ -6,7 +6,7 @@
 // rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 // sell copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
@@ -55,7 +55,7 @@ namespace
       // In docs, but not in code:
       /* id3v2_FrameWrap(ID3v2::Header *h) : ID3v2::Frame(h) { } */
   };
-  
+
   void id3v2_Tag_addFrame(ID3v2::Tag &t, ID3v2::Frame *f)
   {
     ID3v2::Frame *f_clone = ID3v2::FrameFactory::instance()->createFrame(f->render());
@@ -126,7 +126,7 @@ void exposeID3()
       ("id3v2_FrameFactory", no_init)
       .def("createFrame", cf1, return_value_policy<manage_new_object>())
       .def("createFrame", cf2, createFrame_overloads()[return_value_policy<manage_new_object>()])
-      .def("instance", &cl::instance, 
+      .def("instance", &cl::instance,
           return_value_policy<reference_existing_object>())
       .staticmethod("instance")
 
@@ -145,11 +145,11 @@ void exposeID3()
       .def("toString", pure_virtual(&ID3v2::Frame::toString))
       .DEF_SIMPLE_METHOD(render)
 
-      .def("headerSize", 
-           (TagLib::uint (*)()) 
+      .def("headerSize",
+           (TagLib::uint (*)())
            &ID3v2::Frame::headerSize)
-      .def("headerSize", 
-           (TagLib::uint (*)(TagLib::uint)) 
+      .def("headerSize",
+           (TagLib::uint (*)(TagLib::uint))
            &ID3v2::Frame::headerSize)
       // MISSING: textDelimiter
       ;
@@ -158,7 +158,7 @@ void exposeID3()
   {
     typedef ID3v2::Header cl;
     class_<cl, boost::noncopyable>
-      ("id3v2_Header") 
+      ("id3v2_Header")
     // MISSING: second constructor
       .DEF_SIMPLE_METHOD(majorVersion)
       .DEF_SIMPLE_METHOD(revisionNumber)
@@ -180,7 +180,7 @@ void exposeID3()
   {
     typedef ID3v2::ExtendedHeader cl;
     class_<cl, boost::noncopyable>
-      ("id3v2_ExtendedHeader", no_init) 
+      ("id3v2_ExtendedHeader", no_init)
       .DEF_SIMPLE_METHOD(size)
       .DEF_SIMPLE_METHOD(setData)
       ;
@@ -189,7 +189,7 @@ void exposeID3()
   {
     typedef ID3v2::Footer cl;
     class_<cl, boost::noncopyable>
-      ("id3v2_Footer", no_init) 
+      ("id3v2_Footer", no_init)
       .DEF_SIMPLE_METHOD(render)
       .DEF_SIMPLE_METHOD(size)
       .staticmethod("size")
@@ -202,16 +202,16 @@ void exposeID3()
       &cl::frameList;
     const ID3v2::FrameList &(cl::*fl2)() const =
       &cl::frameList;
-  
+
     class_<cl, boost::noncopyable, bases<Tag> >("id3v2_Tag")
       .def("header", &ID3v2::Tag::header, return_internal_reference<>())
       .def("extendedHeader", &ID3v2::Tag::extendedHeader, return_internal_reference<>())
       .def("footer", &ID3v2::Tag::footer, return_internal_reference<>())
-      
+
       .def("frameListMap", &ID3v2::Tag::frameListMap, return_internal_reference<>())
       .def("frameList", fl1, return_internal_reference<>())
       .def("frameList", fl2, return_internal_reference<>())
-      
+
       .def("addFrame", id3v2_Tag_addFrame)
       .DEF_SIMPLE_METHOD(removeFrame)
       .DEF_SIMPLE_METHOD(removeFrames)
@@ -224,7 +224,7 @@ void exposeID3()
       ;
   }
 
- 
+
   // -------------------------------------------------------------
   // ID3v2 frame types
   // -------------------------------------------------------------
@@ -397,7 +397,7 @@ void exposeID3()
   {
     typedef MPEG::Properties cl;
     class_<cl, bases<AudioProperties>, boost::noncopyable>
-      ("mpeg_Properties", 
+      ("mpeg_Properties",
        //init<File *, AudioProperties::ReadStyle>()
        no_init
        )
@@ -412,25 +412,25 @@ void exposeID3()
   {
     typedef MPEG::File cl;
     class_<MPEG::File, bases<File>, boost::noncopyable>
-      ("mpeg_File", 
+      ("mpeg_File",
        init<const char *, optional<bool, AudioProperties::ReadStyle> >())
       .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
-      .def("save", 
+      .def("save",
            (bool (MPEG::File::*)(int, bool))
            &cl::save,
            save_overloads())
-      .def("ID3v1Tag", 
+      .def("ID3v1Tag",
            (ID3v1::Tag *(MPEG::File::*)(bool))
            &cl::ID3v1Tag,
            ID3v1Tag_overloads()[return_internal_reference<>()])
-      .def("ID3v2Tag", 
+      .def("ID3v2Tag",
            (ID3v2::Tag *(MPEG::File::*)(bool))
            &cl::ID3v2Tag,
            ID3v2Tag_overloads()[return_internal_reference<>()])
-      .def("APETag", 
+      .def("APETag",
            (APE::Tag *(cl::*)(bool)) &cl::APETag,
            APETag_overloads()[return_internal_reference<>()])
-      .def("strip", 
+      .def("strip",
            (bool (cl::*)(int)) &cl::strip,
            strip_overloads())
       .DEF_SIMPLE_METHOD(setID3v2FrameFactory)
