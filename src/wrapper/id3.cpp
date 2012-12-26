@@ -79,7 +79,7 @@ namespace
   MF_OL(setVolumeAdjustment, 1, 2);
   MF_OL(setPeakVolume, 1, 2);
 
-  #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10700)
+  #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
     MF_OL(render, 0, 1)
   #endif
 
@@ -215,8 +215,8 @@ void exposeID3()
       .def("addFrame", id3v2_Tag_addFrame)
       .DEF_SIMPLE_METHOD(removeFrame)
       .DEF_SIMPLE_METHOD(removeFrames)
-      
-      #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10700)
+
+      #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
         .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)(int) const)
       #else
         .DEF_SIMPLE_METHOD(render)
