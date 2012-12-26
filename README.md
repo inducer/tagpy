@@ -1,12 +1,11 @@
 TagPy
 =====
 
-TagPy is a Python crust (or a set of Python bindings) for Scott Wheeler's
-TagLib [1](http://developer.kde.org/~wheeler/taglib.html). It builds upon
-Boost.Python [2](http://www.boost.org/libs/python/doc/), a wrapper generation
-library which is part of the Boost set of C++ libraries
-[3](http://www.boost.org). It has its own web site
-[4](http://mathema.tician.de/software/tagpy).
+TagPy is a a set of Python bindings for Scott Wheeler's TagLib
+[1](http://developer.kde.org/~wheeler/taglib.html). It builds upon Boost.Python
+[2](http://www.boost.org/libs/python/doc/), a wrapper generation library which
+is part of the Boost set of C++ libraries [3](http://www.boost.org). It has its
+own web site [4](http://mathema.tician.de/software/tagpy).
 
 Just like TagLib, TagPy can:
 
@@ -138,7 +137,7 @@ exceptions:
 - Enumerations form their own scope and are not part of any
   enclosing class scope, if any.
 
-  For example, the value "TagLib::String::UTF16BE" from the 
+  For example, the value `TagLib::String::UTF16BE` from the 
   enum `TagLib::String::Type` is now `tagpy.StringType.UTF16BE`.
 
 - `TagLib::String` objects are mapped to and expected as Python
