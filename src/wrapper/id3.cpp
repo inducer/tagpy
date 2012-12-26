@@ -21,21 +21,21 @@
 
 
 
-#include <id3v1genres.h>
-#include <id3v1tag.h>
-#include <id3v2tag.h>
-#include <id3v2header.h>
-#include <id3v2extendedheader.h>
-#include <id3v2footer.h>
-#include <mpegfile.h>
-#include <attachedpictureframe.h>
-#include <commentsframe.h>
-#include <relativevolumeframe.h>
-#include <textidentificationframe.h>
-#include <uniquefileidentifierframe.h>
-#include <unknownframe.h>
-#include <unsynchronizedlyricsframe.h>
-#include <apetag.h>
+#include <taglib/id3v1genres.h>
+#include <taglib/id3v1tag.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2header.h>
+#include <taglib/id3v2extendedheader.h>
+#include <taglib/id3v2footer.h>
+#include <taglib/mpegfile.h>
+#include <taglib/attachedpictureframe.h>
+#include <taglib/commentsframe.h>
+#include <taglib/relativevolumeframe.h>
+#include <taglib/textidentificationframe.h>
+#include <taglib/uniquefileidentifierframe.h>
+#include <taglib/unknownframe.h>
+#include <taglib/unsynchronizedlyricsframe.h>
+#include <taglib/apetag.h>
 
 #include "common.hpp"
 

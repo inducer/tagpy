@@ -21,16 +21,16 @@
 
 
 
-#include <apetag.h>
-#include <mpcfile.h>
-#include <flacfile.h>
-#include <xiphcomment.h>
-#include <oggflacfile.h>
-#include <vorbisfile.h>
-#include <apefooter.h>
-#include <apeitem.h>
-#include <id3v1tag.h>
-#include <id3v2tag.h>
+#include <taglib/apetag.h>
+#include <taglib/mpcfile.h>
+#include <taglib/flacfile.h>
+#include <taglib/xiphcomment.h>
+#include <taglib/oggflacfile.h>
+#include <taglib/vorbisfile.h>
+#include <taglib/apefooter.h>
+#include <taglib/apeitem.h>
+#include <taglib/id3v1tag.h>
+#include <taglib/id3v2tag.h>
 
 #include "common.hpp"
 

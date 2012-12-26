@@ -21,15 +21,15 @@
 
 
 
-#include <tstring.h>
-#include <tag.h>
-#include <tag.h>
-#include <tfile.h>
-#include <audioproperties.h>
-#include <tstringlist.h>
-#include <fileref.h>
-#include <tmap.h>
-#include <tlist.h>
+#include <taglib/tstring.h>
+#include <taglib/tag.h>
+#include <taglib/tag.h>
+#include <taglib/tfile.h>
+#include <taglib/audioproperties.h>
+#include <taglib/tstringlist.h>
+#include <taglib/fileref.h>
+#include <taglib/tmap.h>
+#include <taglib/tlist.h>
 
 #include "common.hpp"
 
