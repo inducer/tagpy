@@ -9,7 +9,7 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 
@@ -22,10 +22,8 @@
 # SOFTWARE.
 
 
-
-
 def get_config_schema():
-    from aksetup_helper import ConfigSchema, Option, \
+    from aksetup_helper import ConfigSchema, \
             IncludeDir, LibraryDir, Libraries, BoostLibraries, \
             Switch, StringListOption, make_boost_base_options
 
@@ -36,15 +34,12 @@ def get_config_schema():
         LibraryDir("TAGLIB", []),
         Libraries("TAGLIB", ["tag"]),
 
-        StringListOption("CXXFLAGS", [], 
+        StringListOption("CXXFLAGS", [],
             help="Any extra C++ compiler options to include"),
         ])
 
 
-
-
 def main():
-    import glob
     from aksetup_helper import hack_distutils, get_config, setup, Extension
 
     hack_distutils()
@@ -61,37 +56,37 @@ def main():
           author="Andreas Kloeckner",
           author_email="inform@tiker.net",
           classifiers=
-          [ "Development Status :: 5 - Production/Stable",
-            "Intended Audience :: Developers",
-            "License :: OSI Approved :: MIT License",
-            "Natural Language :: English",
-            "Operating System :: OS Independent",
-            "Operating System :: POSIX",
-            "Operating System :: Unix",
-            "Programming Language :: Python",
-            "Programming Language :: Python :: 3",
-            "Topic :: Multimedia :: Sound/Audio",
-            "Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping",
-            "Topic :: Multimedia :: Sound/Audio :: Editors",
-            "Topic :: Software Development :: Libraries :: Python Modules",
-            "Topic :: Utilities"],
-          license = "MIT",
+          [
+              "Development Status :: 5 - Production/Stable",
+              "Intended Audience :: Developers",
+              "License :: OSI Approved :: MIT License",
+              "Natural Language :: English",
+              "Operating System :: OS Independent",
+              "Operating System :: POSIX",
+              "Operating System :: Unix",
+              "Programming Language :: Python",
+              "Programming Language :: Python :: 3",
+              "Topic :: Multimedia :: Sound/Audio",
+              "Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping",
+              "Topic :: Multimedia :: Sound/Audio :: Editors",
+              "Topic :: Software Development :: Libraries :: Python Modules",
+              "Topic :: Utilities"],
+          license="MIT",
 
           url="http://mathema.tician.de/software/tagpy",
           packages=["tagpy", "tagpy.ogg"],
-          ext_modules=[ Extension("_tagpy", 
-                                  ["src/wrapper/basics.cpp", 
-                                   "src/wrapper/id3.cpp",
-                                   "src/wrapper/rest.cpp"],
-                                  include_dirs=INCLUDE_DIRS,
-                                  library_dirs=LIBRARY_DIRS,
-                                  libraries=LIBRARIES,
-                                  extra_compile_args=conf["CXXFLAGS"],
-                                  ),
+          ext_modules=[
+              Extension("_tagpy",
+                  ["src/wrapper/basics.cpp",
+                      "src/wrapper/id3.cpp",
+                      "src/wrapper/rest.cpp"],
+                  include_dirs=INCLUDE_DIRS,
+                  library_dirs=LIBRARY_DIRS,
+                  libraries=LIBRARIES,
+                  extra_compile_args=conf["CXXFLAGS"],
+                  ),
                         ]
           )
-
-
 
 
 if __name__ == '__main__':
