@@ -86,7 +86,11 @@ namespace
   // -------------------------------------------------------------
   // MPEG
   // -------------------------------------------------------------
-  MF_OL(save, 0, 2)
+  #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
+    MF_OL(save, 0, 3)
+  #else
+    MF_OL(save, 0, 2)
+  #endif
   MF_OL(ID3v1Tag, 0, 1)
   MF_OL(ID3v2Tag, 0, 1)
   MF_OL(APETag, 0, 1)
@@ -416,7 +420,11 @@ void exposeID3()
        init<const char *, optional<bool, AudioProperties::ReadStyle> >())
       .def(init<const char *, ID3v2::FrameFactory *, optional<bool, AudioProperties::ReadStyle> >())
       .def("save",
-           (bool (MPEG::File::*)(int, bool))
+           #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
+             (bool (MPEG::File::*)(int, bool, int))
+           #else
+             (bool (MPEG::File::*)(int, bool))
+           #endif
            &cl::save,
            save_overloads())
       .def("ID3v1Tag",
