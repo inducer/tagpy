@@ -6,7 +6,7 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
 
@@ -19,27 +19,21 @@
 # SOFTWARE.
 
 
-
-
 import _tagpy
 from _tagpy import Tag, File, AudioProperties, StringType, ReadStyle
 #AudioProperties.ReadStyle = _tagpy.ReadStyle
 
 
-
-
 class FileTypeResolver(object):
-    def createFile(self, fileName, readAudioProperties=True, 
+    def createFile(self, fileName, readAudioProperties=True,
             audioPropertiesStyle=ReadStyle.Average):
         raise NotImplementedError
-
-
 
 
 class FileRef(object):
     fileTypeResolvers = []
 
-    def __init__(self, f, readAudioProperties=True, 
+    def __init__(self, f, readAudioProperties=True,
             audioPropertiesStyle=ReadStyle.Average):
         if isinstance(f, FileRef):
             self._file = f._file
@@ -77,7 +71,9 @@ class FileRef(object):
     def _getExtToModule():
         import tagpy.ogg.vorbis
         import tagpy.ogg.flac
-        import tagpy.mpeg, tagpy.flac, tagpy.mpc
+        import tagpy.mpeg
+        import tagpy.flac
+        import tagpy.mpc
 
         #import tagpy.wavpack, tagpy.ogg.speex, tagpy.trueaudio
 
@@ -93,13 +89,17 @@ class FileRef(object):
                 }
 
     @classmethod
-    def create(cls, fileName, readAudioProperties=True, 
+    def create(cls, fileName, readAudioProperties=True,
             audioPropertiesStyle=ReadStyle.Average):
         for resolver in cls.fileTypeResolvers:
             file = resolver.createFile(fileName, readAudioProperties,
                 audioPropertiesStyle)
             if file:
                 return file
+
+        from os.path import exists
+        if not exists(fileName):
+            raise IOError("File does not exist")
 
         from os.path import splitext
         ext = splitext(fileName)[1][1:].lower()
