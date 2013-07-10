@@ -221,9 +221,10 @@ void exposeID3()
       .DEF_SIMPLE_METHOD(removeFrames)
 
       #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
+        .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)() const)
         .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)(int) const)
       #else
-        .DEF_SIMPLE_METHOD(render)
+        .def("render", (ByteVector (cl::*)() const) &cl::render)
       #endif
       ;
   }
