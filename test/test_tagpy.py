@@ -1,3 +1,4 @@
+import pytest
 import tagpy
 try:
     import faulthandler
@@ -8,7 +9,8 @@ else:
 
 
 def test_non_existing_fileref():
-    tagpy.FileRef('does_not_exist.ogg')
+    with pytest.raises(IOError):
+        tagpy.FileRef('does_not_exist.ogg')
 
 
 if __name__ == "__main__":

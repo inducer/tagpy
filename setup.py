@@ -73,6 +73,8 @@ def main():
               "Topic :: Utilities"],
           license="MIT",
 
+          install_requires=["pytest"],
+
           url="http://mathema.tician.de/software/tagpy",
           packages=["tagpy", "tagpy.ogg"],
           ext_modules=[
