@@ -50,7 +50,7 @@ def main():
     LIBRARIES = conf["TAGLIB_LIBNAME"] + conf["BOOST_PYTHON_LIBNAME"]
 
     setup(name="tagpy",
-          version="2018.1",
+          version="2018.1.1",
           description="Python Bindings for TagLib",
           long_description=open("README.rst", "rt").read(),
           author="Andreas Kloeckner",
