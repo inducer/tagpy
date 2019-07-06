@@ -221,7 +221,9 @@ void exposeID3()
       .DEF_SIMPLE_METHOD(removeFrames)
 
       #if (TAGPY_TAGLIB_HEX_VERSION >= 0x10800)
-        .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)() const)
+        // Commented out following comment at:
+        // https://github.com/inducer/tagpy/commit/fb6d9a95f8ed1b0f347a82569a13e60a75c7e6d6
+        // .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)() const)
         .DEF_OVERLOADED_METHOD(render, ByteVector (cl::*)(int) const)
       #else
         .def("render", (ByteVector (cl::*)() const) &cl::render)
